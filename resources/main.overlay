@@ -1,0 +1,89 @@
+MusicBox
+{
+    zorder 200
+
+    container BorderPanel(MyOverlayElements/Main)
+    {
+        width 0.5
+        height 1
+        left 0.25
+        top 0
+        material BaseWhite
+
+        container BorderPanel(MyOverlayElements/1)
+        {
+            width 0.125
+            height 0.075
+            left 0
+            top 0.925
+
+            border_size 0.01 0.01 0.01 0.01
+            border_material Sinbad/Ruby
+
+            element TextArea(MyOverlayElements/1/cap)
+            {
+                font_name SdkTrays/Caption
+                char_height 0.03
+                colour 1 0 0
+                caption H
+            }
+        }
+
+        container BorderPanel(MyOverlayElements/2)
+        {
+            width 0.125
+            height 0.075
+            left 0.125
+            top 0.925
+
+            border_size 0.01 0.01 0.01 0.01
+            border_material Sinbad/Ruby
+
+            element TextArea(MyOverlayElements/2/cap)
+            {
+                font_name SdkTrays/Caption
+                char_height 0.03
+                colour 1 0 0
+                caption J
+            }
+        }
+
+        container BorderPanel(MyOverlayElements/3)
+        {
+            width 0.125
+            height 0.075
+            left 0.25
+            top 0.925
+
+            border_size 0.01 0.01 0.01 0.01
+            border_material Sinbad/Ruby
+
+            element TextArea(MyOverlayElements/3/cap)
+            {
+                font_name SdkTrays/Caption
+                char_height 0.03
+                colour 1 0 0
+                caption K
+            }
+        }
+
+        container BorderPanel(MyOverlayElements/4)
+        {
+            width 0.125
+            height 0.075
+            left 0.375
+            top 0.925
+
+            border_size 0.01 0.01 0.01 0.01
+            border_material Sinbad/Ruby
+
+            element TextArea(MyOverlayElements/4/cap)
+            {
+                font_name SdkTrays/Caption
+                char_height 0.03
+                colour 1 0 0
+                caption L
+            }
+        }
+    }
+}
