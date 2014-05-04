@@ -39,23 +39,20 @@ public:
     }
 };
 
-class StringIdAllocator {
-    std::vector<Ogre::String> v;
-    Ogre::String prefix;
-    int count;
+class IdAllocator {
+    int top;
 
 public:
-    StringIdAllocator(const Ogre::String& prefix) : prefix(prefix), count(0) {}
+    IdAllocator() : top(0) {}
 
-    const Ogre::String& alloc() {
-        v.push_back(prefix + std::to_string(count++));
-        return v.back();
+    int alloc() {
+        return top++;
     }
 };
 
 class Main {
     MusicRunner runner;
-    StringIdAllocator strAlloc;
+    IdAllocator strAlloc;
     std::vector<Ogre::OverlayContainer*> blocks;
     std::unique_ptr<Ogre::Root> mRoot;
     std::unique_ptr<Ogre::OverlaySystem> mOverlaySystem;
@@ -66,7 +63,7 @@ class Main {
     constexpr static int FPS_LIMIT = 60;
 
 public:
-    Main(Ogre::String mResourcesCfg = "resources.cfg", Ogre::String mPluginsCfg = "plugins.cfg") : strAlloc("Block:"), mRoot(std::make_unique<Ogre::Root>(mPluginsCfg)), mOverlaySystem(std::make_unique<Ogre::OverlaySystem>()) {
+    Main(Ogre::String mResourcesCfg = "resources.cfg", Ogre::String mPluginsCfg = "plugins.cfg") : mRoot(std::make_unique<Ogre::Root>(mPluginsCfg)), mOverlaySystem(std::make_unique<Ogre::OverlaySystem>()) {
         assert(mRoot->restoreConfig() || mRoot->showConfigDialog());
         assert(mWindow = mRoot->initialise(true, "Main"));
         assert(mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC));
@@ -84,16 +81,16 @@ public:
         for (auto it = Ogre::FontManager::getSingleton().getResourceIterator(); it.hasMoreElements(); it.moveNext()) {
             std::cerr << it.peekNextValue()->getName() << "\n";
         }
+    }
 
+    void go() {
         Ogre::FontManager::getSingleton().getByName("SdkTrays/Caption")->load();
 
         mSceneMgr->addRenderQueueListener(mOverlaySystem.get());
         auto& overlayManager = Ogre::OverlayManager::getSingleton();
         auto overlay = overlayManager.getByName("MusicBox");
         overlay->show();
-    }
 
-    void go() {
         Ogre::Viewport* vp = mWindow->addViewport(mCamera);
         vp->setBackgroundColour(Ogre::ColourValue(0,0,0));
 
@@ -170,23 +167,24 @@ private:
     }
 
     void oneFrame(double delta_time, bool tick) {
-        std::vector<Ogre::OverlayContainer*> new_vec;
+        decltype(blocks) new_vec;
         for (auto it : blocks) {
-            it->setTop(it->getTop() + MusicRunner::BLOCK_SPEED * delta_time / 1000);
+            auto new_top = it->getTop() + MusicRunner::BLOCK_SPEED * delta_time / 1000;
             if (it->getTop() < 1) {
+                it->setTop(new_top);
                 new_vec.push_back(it);
             }
         }
         blocks = std::move(new_vec);
-        if (tick) {
-            std::cerr << blocks.size() << "\n";
-        }
+        //if (tick) {
+        //    std::cerr << blocks.size() << "\n";
+        //}
         int count = runner.addTime(delta_time);
         while (count--) {
             int new_block_idx = rand() % 4;
 
             auto& overlayManager = Ogre::OverlayManager::getSingleton();
-            auto block = static_cast<Ogre::OverlayContainer*>(overlayManager.createOverlayElement("Panel", strAlloc.alloc()));
+            auto block = static_cast<Ogre::OverlayContainer*>(overlayManager.createOverlayElement("Panel", std::string("Block:") + std::to_string(strAlloc.alloc())));
             static_cast<Ogre::OverlayContainer*>(overlayManager.getOverlayElement("MyOverlayElements/Main"))->addChild(block);
             block->setMaterialName("Sinbad/Ruby");
             block->setDimensions(0.125, 0.05);
