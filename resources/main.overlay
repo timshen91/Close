@@ -2,25 +2,23 @@ MusicBox
 {
     zorder 200
 
-    container BorderPanel(MyOverlayElements/Main)
+    container Panel(MusicBox/Main)
     {
         width 0.5
         height 1
         left 0.25
         top 0
-        material BaseWhite
+        transparent true
 
-        container BorderPanel(MyOverlayElements/1)
+        container Panel(MusicBox/1)
         {
             width 0.125
             height 0.075
             left 0
             top 0.925
+            material SdkTrays/Button/Up
 
-            border_size 0.01 0.01 0.01 0.01
-            border_material Sinbad/Ruby
-
-            element TextArea(MyOverlayElements/1/cap)
+            element TextArea(MusicBox/1/cap)
             {
                 font_name SdkTrays/Caption
                 char_height 0.03
@@ -29,17 +27,15 @@ MusicBox
             }
         }
 
-        container BorderPanel(MyOverlayElements/2)
+        container Panel(MusicBox/2)
         {
             width 0.125
             height 0.075
             left 0.125
             top 0.925
+            material SdkTrays/Button/Up
 
-            border_size 0.01 0.01 0.01 0.01
-            border_material Sinbad/Ruby
-
-            element TextArea(MyOverlayElements/2/cap)
+            element TextArea(MusicBox/2/cap)
             {
                 font_name SdkTrays/Caption
                 char_height 0.03
@@ -48,17 +44,15 @@ MusicBox
             }
         }
 
-        container BorderPanel(MyOverlayElements/3)
+        container Panel(MusicBox/3)
         {
             width 0.125
             height 0.075
             left 0.25
             top 0.925
+            material SdkTrays/Button/Up
 
-            border_size 0.01 0.01 0.01 0.01
-            border_material Sinbad/Ruby
-
-            element TextArea(MyOverlayElements/3/cap)
+            element TextArea(MusicBox/3/cap)
             {
                 font_name SdkTrays/Caption
                 char_height 0.03
@@ -67,17 +61,15 @@ MusicBox
             }
         }
 
-        container BorderPanel(MyOverlayElements/4)
+        container Panel(MusicBox/4)
         {
             width 0.125
             height 0.075
             left 0.375
             top 0.925
+            material SdkTrays/Button/Up
 
-            border_size 0.01 0.01 0.01 0.01
-            border_material Sinbad/Ruby
-
-            element TextArea(MyOverlayElements/4/cap)
+            element TextArea(MusicBox/4/cap)
             {
                 font_name SdkTrays/Caption
                 char_height 0.03
@@ -85,5 +77,18 @@ MusicBox
                 caption L
             }
         }
+    }
+}
+
+RunningBox
+{
+    zorder 100
+
+    container Panel(RunningBox/Main)
+    {
+        width 0.5
+        height 1
+        left 0.25
+        top 0
     }
 }

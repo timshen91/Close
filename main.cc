@@ -88,8 +88,8 @@ public:
 
         mSceneMgr->addRenderQueueListener(mOverlaySystem.get());
         auto& overlayManager = Ogre::OverlayManager::getSingleton();
-        auto overlay = overlayManager.getByName("MusicBox");
-        overlay->show();
+        overlayManager.getByName("MusicBox")->show();
+        overlayManager.getByName("RunningBox")->show();
 
         Ogre::Viewport* vp = mWindow->addViewport(mCamera);
         vp->setBackgroundColour(Ogre::ColourValue(0,0,0));
@@ -185,8 +185,8 @@ private:
 
             auto& overlayManager = Ogre::OverlayManager::getSingleton();
             auto block = static_cast<Ogre::OverlayContainer*>(overlayManager.createOverlayElement("Panel", std::string("Block:") + std::to_string(strAlloc.alloc())));
-            static_cast<Ogre::OverlayContainer*>(overlayManager.getOverlayElement("MyOverlayElements/Main"))->addChild(block);
-            block->setMaterialName("Sinbad/Ruby");
+            static_cast<Ogre::OverlayContainer*>(overlayManager.getOverlayElement("RunningBox/Main"))->addChild(block);
+            block->setMaterialName("SdkTrays/Logo");
             block->setDimensions(0.125, 0.05);
             block->setLeft(new_block_idx * 0.125);
             block->setTop(0.0);
