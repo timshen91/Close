@@ -31,12 +31,11 @@ public:
 
     int addTime(double delta_time) {
         fake_timer += delta_time;
-        int count = 0;
-        while (fake_timer >= INTERVAL) {
+        if (fake_timer >= INTERVAL) {
             fake_timer -= INTERVAL;
-            count++;
+            return rand() % 4;
         }
-        return count;
+        return -1;
     }
 };
 
@@ -91,6 +90,7 @@ public:
 
         mOverlayManager->getByName("MusicBox")->show();
         mOverlayManager->getByName("RunningBox")->show();
+        mOverlayManager->getByName("ScoreBoard")->show();
 
         Ogre::Viewport* vp = mWindow->addViewport(mCamera);
         vp->setBackgroundColour(Ogre::ColourValue(0,0,0));
@@ -195,10 +195,8 @@ private:
             }
         }
         blocks = std::move(new_vec);
-        int count = runner.addTime(delta_time);
-        while (count--) {
-            int new_block_idx = rand() % 4;
-
+        int new_block_idx = runner.addTime(delta_time);
+        if (new_block_idx >= 0) {
             auto block = static_cast<Ogre::OverlayContainer*>(mOverlayManager->createOverlayElement("Panel", std::string("Block:") + std::to_string(new_block_idx) + std::to_string(idTop++)));
             static_cast<Ogre::OverlayContainer*>(mOverlayManager->getOverlayElement("RunningBox/Main"))->addChild(block);
             block->setMaterialName("SdkTrays/Logo");
@@ -247,7 +245,8 @@ private:
     }
 
     void handleHit(Ogre::OverlayContainer* p) {
-        std::cerr << "Yaaaaaaaay!\n";
+        auto s = mOverlayManager->getOverlayElement("ScoreBoard/ScoreBoard");
+        s->setCaption(std::to_string(std::stoi(std::string(s->getCaption()))+1));
     }
 };
 

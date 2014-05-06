@@ -92,3 +92,21 @@ RunningBox
         top 0
     }
 }
+
+ScoreBoard
+{
+    container Panel(ScoreBoard/Main)
+    {
+        left 0
+        top 0
+        transparent true
+
+        element TextArea(ScoreBoard/ScoreBoard)
+        {
+            font_name SdkTrays/Caption
+            char_height 0.05
+            colour 1 1 1
+            caption 0
+        }
+    }
+}
