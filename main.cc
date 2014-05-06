@@ -66,6 +66,7 @@ public:
         size_t windowHnd = 0;
         mWindow->getCustomAttribute("WINDOW", &windowHnd);
         pl.insert(std::make_pair(std::string("WINDOW"), std::to_string(windowHnd)));
+        pl.insert(std::make_pair(std::string("x11_keyboard_grab"), std::string("false")));
         mInputManager = OIS::InputManager::createInputSystem(pl);
         mKeyboard = static_cast<OIS::Keyboard*>(mInputManager->createInputObject(OIS::OISKeyboard, true));
 
@@ -184,17 +185,17 @@ private:
         gettimeofday(&tvb, &tz);
 
         auto delta_time = evt.timeSinceLastFrame * 1000;
-        decltype(blocks) new_vec;
+        int new_size = 0;
         for (auto it : blocks) {
             auto new_top = it->getTop() + MusicRunner::BLOCK_SPEED * delta_time / 1000;
             if (it->getTop() < 1) {
                 it->setTop(new_top);
-                new_vec.push_back(it);
+                blocks[new_size++] = it;
             } else {
                 mOverlayManager->destroyOverlayElement(it);
             }
         }
-        blocks = std::move(new_vec);
+        blocks.resize(new_size);
         int new_block_idx = runner.addTime(delta_time);
         if (new_block_idx >= 0) {
             auto block = static_cast<Ogre::OverlayContainer*>(mOverlayManager->createOverlayElement("Panel", std::string("Block:") + std::to_string(new_block_idx) + std::to_string(idTop++)));
@@ -223,20 +224,19 @@ private:
         case OIS::KC_K: section = 2; break;
         case OIS::KC_L: section = 3; break;
         case OIS::KC_ESCAPE: isClosing = true; break;
-        default: return true;
+        default: return false;
         }
-        decltype(blocks) new_vec;
+        int new_size = 0;
         auto btn = Ogre::OverlayManager::getSingleton().getOverlayElement("MusicBox/"+std::to_string(section+1));
         for (auto it : blocks) {
-            if (it->getLeft() == section * 0.125 &&
-                (it->getTop() < btn->getTop() && btn->getTop() < it->getTop() + it->getHeight())) {
+            if (it->getLeft() == btn->getLeft() && it->getTop() > btn->getTop()) {
                 handleHit(it);
                 mOverlayManager->destroyOverlayElement(it);
             } else {
-                new_vec.push_back(it);
+                blocks[new_size++] = it;
             }
         }
-        blocks = std::move(new_vec);
+        blocks.resize(new_size);
         return true;
     }
 
