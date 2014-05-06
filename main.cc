@@ -50,13 +50,14 @@ class Main : public Ogre::FrameListener, OIS::KeyListener {
     Ogre::Camera* mCamera;
     OIS::InputManager* mInputManager;
     OIS::Keyboard* mKeyboard;
+    Ogre::OverlayManager* mOverlayManager;
     int idTop;
     bool isClosing;
 
     constexpr static int FPS_LIMIT = 60;
 
 public:
-    Main(Ogre::String mResourcesCfg = "resources.cfg", Ogre::String mPluginsCfg = "plugins.cfg") : mRoot(std::make_unique<Ogre::Root>(mPluginsCfg)), mOverlaySystem(std::make_unique<Ogre::OverlaySystem>()), idTop(0), isClosing(false) {
+    Main(Ogre::String mResourcesCfg = "resources.cfg", Ogre::String mPluginsCfg = "plugins.cfg") : mRoot(std::make_unique<Ogre::Root>(mPluginsCfg)), mOverlaySystem(std::make_unique<Ogre::OverlaySystem>()), mOverlayManager(Ogre::OverlayManager::getSingletonPtr()), idTop(0), isClosing(false) {
         assert(mRoot->restoreConfig() || mRoot->showConfigDialog());
         assert(mWindow = mRoot->initialise(true, "Main"));
         assert(mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC));
@@ -88,9 +89,8 @@ public:
     void go() {
         Ogre::FontManager::getSingleton().getByName("SdkTrays/Caption")->load();
 
-        auto& overlayManager = Ogre::OverlayManager::getSingleton();
-        overlayManager.getByName("MusicBox")->show();
-        overlayManager.getByName("RunningBox")->show();
+        mOverlayManager->getByName("MusicBox")->show();
+        mOverlayManager->getByName("RunningBox")->show();
 
         Ogre::Viewport* vp = mWindow->addViewport(mCamera);
         vp->setBackgroundColour(Ogre::ColourValue(0,0,0));
@@ -190,6 +190,8 @@ private:
             if (it->getTop() < 1) {
                 it->setTop(new_top);
                 new_vec.push_back(it);
+            } else {
+                mOverlayManager->destroyOverlayElement(it);
             }
         }
         blocks = std::move(new_vec);
@@ -197,9 +199,8 @@ private:
         while (count--) {
             int new_block_idx = rand() % 4;
 
-            auto& overlayManager = Ogre::OverlayManager::getSingleton();
-            auto block = static_cast<Ogre::OverlayContainer*>(overlayManager.createOverlayElement("Panel", std::string("Block:") + std::to_string(idTop++)));
-            static_cast<Ogre::OverlayContainer*>(overlayManager.getOverlayElement("RunningBox/Main"))->addChild(block);
+            auto block = static_cast<Ogre::OverlayContainer*>(mOverlayManager->createOverlayElement("Panel", std::string("Block:") + std::to_string(new_block_idx) + std::to_string(idTop++)));
+            static_cast<Ogre::OverlayContainer*>(mOverlayManager->getOverlayElement("RunningBox/Main"))->addChild(block);
             block->setMaterialName("SdkTrays/Logo");
             block->setDimensions(0.125, 0.05);
             block->setLeft(new_block_idx * 0.125);
@@ -226,11 +227,27 @@ private:
         case OIS::KC_ESCAPE: isClosing = true; break;
         default: return true;
         }
+        decltype(blocks) new_vec;
+        auto btn = Ogre::OverlayManager::getSingleton().getOverlayElement("MusicBox/"+std::to_string(section+1));
+        for (auto it : blocks) {
+            if (it->getLeft() == section * 0.125 &&
+                (it->getTop() < btn->getTop() && btn->getTop() < it->getTop() + it->getHeight())) {
+                handleHit(it);
+                mOverlayManager->destroyOverlayElement(it);
+            } else {
+                new_vec.push_back(it);
+            }
+        }
+        blocks = std::move(new_vec);
         return true;
     }
 
     bool keyReleased(const OIS::KeyEvent& arg) {
         return true;
+    }
+
+    void handleHit(Ogre::OverlayContainer* p) {
+        std::cerr << "Yaaaaaaaay!\n";
     }
 };
 

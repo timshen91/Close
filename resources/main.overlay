@@ -16,7 +16,7 @@ MusicBox
             height 0.075
             left 0
             top 0.925
-            material SdkTrays/Button/Up
+            //material SdkTrays/Button/Up
 
             element TextArea(MusicBox/1/cap)
             {
@@ -33,7 +33,7 @@ MusicBox
             height 0.075
             left 0.125
             top 0.925
-            material SdkTrays/Button/Up
+            //material SdkTrays/Button/Up
 
             element TextArea(MusicBox/2/cap)
             {
@@ -50,7 +50,7 @@ MusicBox
             height 0.075
             left 0.25
             top 0.925
-            material SdkTrays/Button/Up
+            //material SdkTrays/Button/Up
 
             element TextArea(MusicBox/3/cap)
             {
@@ -67,7 +67,7 @@ MusicBox
             height 0.075
             left 0.375
             top 0.925
-            material SdkTrays/Button/Up
+            //material SdkTrays/Button/Up
 
             element TextArea(MusicBox/4/cap)
             {
