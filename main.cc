@@ -184,6 +184,8 @@ private:
         struct timezone tz;
         gettimeofday(&tvb, &tz);
 
+        mKeyboard->capture();
+
         auto delta_time = evt.timeSinceLastFrame * 1000;
         int new_size = 0;
         for (auto it : blocks) {
@@ -206,7 +208,6 @@ private:
             block->setTop(0.0);
             blocks.push_back(block);
         }
-        mKeyboard->capture();
 
         gettimeofday(&tve, &tz);
         auto sleep_time = 1000.0 / FPS_LIMIT - timeDiff(tvb, tve) * 1000;
@@ -227,9 +228,9 @@ private:
         default: return false;
         }
         int new_size = 0;
-        auto btn = Ogre::OverlayManager::getSingleton().getOverlayElement("MusicBox/"+std::to_string(section+1));
+        auto btn = mOverlayManager->getOverlayElement("MusicBox/"+std::to_string(section+1));
         for (auto it : blocks) {
-            if (it->getLeft() == btn->getLeft() && it->getTop() > btn->getTop()) {
+            if (it->getLeft() == btn->getLeft() && it->getTop() + it->getHeight() > btn->getTop()) {
                 handleHit(it);
                 mOverlayManager->destroyOverlayElement(it);
             } else {
