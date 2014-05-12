@@ -241,7 +241,7 @@ private:
         case OIS::KC_J: section = 1; break;
         case OIS::KC_K: section = 2; break;
         case OIS::KC_L: section = 3; break;
-        case OIS::KC_ESCAPE: isClosing = true; break;
+        case OIS::KC_ESCAPE: isClosing = true; return false; break;
         default: return false;
         }
         int new_size = 0;
@@ -269,8 +269,9 @@ private:
 };
 
 int main(int argc, char* argv[]) {
-    if (argc < 1) {
-        std::cout << "Usage: " << argv[0] << " music.wav\n";
+    if (argc < 2) {
+        std::cout << "Usage: " << argv[0] << " path/to/music.wav\n";
+        return 1;
     }
     Main app;
     try {
