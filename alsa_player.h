@@ -5,6 +5,8 @@
 #include <alsa/asoundlib.h>
 
 class Player {
+    constexpr static int FRAME_RATE = 44100;
+
     snd_pcm_t* handle;
     std::vector<int32_t> buf;
     int32_t* cur;
@@ -33,7 +35,7 @@ public:
         assert(snd_pcm_hw_params_any(handle, hw_params) >= 0);
         assert(snd_pcm_hw_params_set_access(handle, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED) >= 0);
         assert(snd_pcm_hw_params_set_format(handle, hw_params, SND_PCM_FORMAT_S16_LE) >= 0);
-        unsigned int rate = 44100;
+        unsigned int rate = FRAME_RATE;
         int dir = 0;
         assert(snd_pcm_hw_params_set_rate_near (handle, hw_params, &rate, &dir) >= 0);
         assert(snd_pcm_hw_params_set_channels (handle, hw_params, 2) >= 0);
@@ -92,7 +94,7 @@ public:
             filter(buf, mx);
         }
         for (auto& it : mx) {
-            it /= 44.1;
+            it /= (double)FRAME_RATE / 1000;
         }
         return mx;
     };

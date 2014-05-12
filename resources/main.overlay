@@ -19,10 +19,11 @@ MusicBox
 
             element TextArea(MusicBox/1/cap)
             {
+                left 0.05
                 font_name SdkTrays/Caption
                 char_height 0.03
                 colour 1 0 0
-                caption H
+                caption A
             }
         }
 
@@ -35,10 +36,11 @@ MusicBox
 
             element TextArea(MusicBox/2/cap)
             {
+                left 0.05
                 font_name SdkTrays/Caption
                 char_height 0.03
                 colour 1 0 0
-                caption J
+                caption S
             }
         }
 
@@ -51,6 +53,7 @@ MusicBox
 
             element TextArea(MusicBox/3/cap)
             {
+                left 0.05
                 font_name SdkTrays/Caption
                 char_height 0.03
                 colour 1 0 0
@@ -67,6 +70,7 @@ MusicBox
 
             element TextArea(MusicBox/4/cap)
             {
+                left 0.05
                 font_name SdkTrays/Caption
                 char_height 0.03
                 colour 1 0 0

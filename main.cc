@@ -27,7 +27,7 @@ class MusicRunner {
     size_t now;
 
 public:
-    constexpr static double BLOCK_SPEED = 0.75;
+    constexpr static double BLOCK_SPEED = 0.5;
 
     void imbue(std::vector<int>&& scr) {
         script = std::move(scr);
@@ -237,8 +237,8 @@ private:
     bool keyPressed(const OIS::KeyEvent& arg) {
         int section;
         switch (arg.key) {
-        case OIS::KC_H: section = 0; break;
-        case OIS::KC_J: section = 1; break;
+        case OIS::KC_A: section = 0; break;
+        case OIS::KC_S: section = 1; break;
         case OIS::KC_K: section = 2; break;
         case OIS::KC_L: section = 3; break;
         case OIS::KC_ESCAPE: isClosing = true; return false; break;
