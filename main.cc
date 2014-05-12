@@ -18,29 +18,36 @@
 #include <Overlay/OgreOverlayElement.h>
 #include <Overlay/OgreOverlayContainer.h>
 #include <OIS.h>
+#include "alsa_player.h"
 
 class MusicRunner {
     constexpr static double INTERVAL = 1000;
-
-    double fake_timer;
+    int timer;
+    std::vector<int> script;
+    size_t now;
 
 public:
-    constexpr static double BLOCK_SPEED = 0.5;
+    constexpr static double BLOCK_SPEED = 0.75;
 
-    MusicRunner() : fake_timer(0) {}
+    void imbue(std::vector<int>&& scr) {
+        script = std::move(scr);
+        now = 0;
+        timer = 0;
+    }
 
-    int addTime(double delta_time) {
-        fake_timer += delta_time;
-        if (fake_timer >= INTERVAL) {
-            fake_timer -= INTERVAL;
-            return rand() % 4;
+    int addTime(int delta_time) {
+        timer += delta_time;
+        int last = now;
+        while (now < script.size() && timer >= script[now] - (int)(1000.0 / BLOCK_SPEED)) {
+            now++;
         }
-        return -1;
+        return now - last;
     }
 };
 
 class Main : public Ogre::FrameListener, OIS::KeyListener {
-    MusicRunner runner;
+    MusicRunner mRunner;
+    Player mPlayer;
     std::vector<Ogre::OverlayContainer*> blocks;
     std::unique_ptr<Ogre::Root> mRoot;
     std::unique_ptr<Ogre::OverlaySystem> mOverlaySystem;
@@ -86,7 +93,10 @@ public:
         }
     }
 
-    void go() {
+    void go(const char* file_name) {
+        mPlayer.prepare(file_name);
+        mRunner.imbue(mPlayer.genRhythm());
+
         Ogre::FontManager::getSingleton().getByName("SdkTrays/Caption")->load();
 
         mOverlayManager->getByName("MusicBox")->show();
@@ -184,6 +194,9 @@ private:
         struct timezone tz;
         gettimeofday(&tvb, &tz);
 
+        if (mPlayer.avail()) {
+            mPlayer.play();
+        }
         mKeyboard->capture();
 
         auto delta_time = evt.timeSinceLastFrame * 1000;
@@ -198,8 +211,12 @@ private:
             }
         }
         blocks.resize(new_size);
-        int new_block_idx = runner.addTime(delta_time);
-        if (new_block_idx >= 0) {
+        auto n = mRunner.addTime(delta_time);
+        if (n > 1) {
+            std::cerr << "Warning: script too dense\n";
+        }
+        if (n > 0) {
+            auto new_block_idx = rand() % 4;
             auto block = static_cast<Ogre::OverlayContainer*>(mOverlayManager->createOverlayElement("Panel", std::string("Block:") + std::to_string(new_block_idx) + std::to_string(idTop++)));
             static_cast<Ogre::OverlayContainer*>(mOverlayManager->getOverlayElement("RunningBox/Main"))->addChild(block);
             block->setMaterialName("SdkTrays/Logo");
@@ -251,10 +268,13 @@ private:
     }
 };
 
-int main() {
+int main(int argc, char* argv[]) {
+    if (argc < 1) {
+        std::cout << "Usage: " << argv[0] << " music.wav\n";
+    }
     Main app;
     try {
-        app.go();
+        app.go(argv[1]);
     } catch(Ogre::Exception& e) {
         std::cerr << "An exception has occured: " << e.getFullDescription().c_str() << std::endl;
     }
