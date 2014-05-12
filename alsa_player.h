@@ -12,7 +12,12 @@ class Player {
     void filter(std::vector<int32_t>& buf, std::vector<int>& mx) {
         int k = 0;
         for (int i = 1; i < (int)mx.size()-1; i++) {
-            if (buf[mx[i-1]] < buf[mx[i]] && buf[mx[i]] > buf[mx[i+1]]) {
+            int32_t a, b, c;
+            // The least significant 16 bits, aka the left channel.
+            a = buf[mx[i-1]] << 16 >> 16;
+            b = buf[mx[i]] << 16 >> 16;
+            c = buf[mx[i+1]] << 16 >> 16;
+            if (a < b && b > c) {
                 mx[k++] = mx[i];
             }
         }
