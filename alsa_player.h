@@ -28,9 +28,9 @@ class Player {
 
 public:
     Player(const char* name = "default") {
-        snd_pcm_hw_params_t* hw_params;
-        assert(snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, 0) >= 0);
+        assert(snd_pcm_open(&handle, name, SND_PCM_STREAM_PLAYBACK, 0) >= 0);
         assert(snd_pcm_nonblock(handle, 1) >= 0);
+        snd_pcm_hw_params_t* hw_params;
         assert(snd_pcm_hw_params_malloc(&hw_params) >= 0);
         assert(snd_pcm_hw_params_any(handle, hw_params) >= 0);
         assert(snd_pcm_hw_params_set_access(handle, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED) >= 0);
